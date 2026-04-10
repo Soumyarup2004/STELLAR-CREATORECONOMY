@@ -26,7 +26,7 @@ import {
 
 /** Your deployed Soroban contract ID */
 export const CONTRACT_ADDRESS =
-  "CDJVMAX34YRCQ5JFC6SIOQOVSUY6XWEFYJOLF3SBCKU7CMI3IAP6HPWN";
+  "CDWMNIYEKY6ODK2KRCI3E2KYZK6YX6UZJL33675O6XSIHI7EQ7PJCFCT";
 
 /** Network passphrase (testnet by default) */
 export const NETWORK_PASSPHRASE = Networks.TESTNET;
@@ -212,56 +212,49 @@ export function toScValBool(value: boolean): xdr.ScVal {
 }
 
 // ============================================================
-// Supply Chain Tracker — Contract Methods
+// Creator Economy — Contract Methods
 // ============================================================
 
 /**
- * Add a product to the supply chain.
- * Calls: add_product(product_id: String, origin: String)
+ * Register as a creator on the platform.
+ * Calls: register_creator(creator: Address)
  */
-export async function addProduct(
-  caller: string,
-  productId: string,
-  origin: string
-) {
+export async function registerCreator(caller: string) {
   return callContract(
-    "add_product",
-    [toScValString(productId), toScValString(origin)],
+    "register_creator",
+    [toScValAddress(caller)],
     caller,
     true
   );
 }
 
 /**
- * Update a product's status.
- * Calls: update_status(product_id: String, new_status: String)
+ * Check if an address is a registered creator (read-only).
+ * Calls: is_creator(creator: Address) -> bool
  */
-export async function updateProductStatus(
-  caller: string,
-  productId: string,
-  newStatus: string
-) {
-  return callContract(
-    "update_status",
-    [toScValString(productId), toScValString(newStatus)],
-    caller,
-    true
-  );
-}
-
-/**
- * Get product details (read-only).
- * Calls: get_product(product_id: String) -> Map<Symbol, String>
- * Returns: { origin: string, status: string } or null
- */
-export async function getProduct(
-  productId: string,
-  caller?: string
-) {
-  return readContract(
-    "get_product",
-    [toScValString(productId)],
+export async function isCreator(address: string, caller?: string): Promise<boolean> {
+  const result = await readContract(
+    "is_creator",
+    [toScValAddress(address)],
     caller
+  );
+  return Boolean(result);
+}
+
+/**
+ * Tip a creator with XLM.
+ * Calls: tip_creator(from: Address, to: Address, amount: i128)
+ */
+export async function tipCreator(
+  caller: string,
+  toAddress: string,
+  amount: bigint
+) {
+  return callContract(
+    "tip_creator",
+    [toScValAddress(caller), toScValAddress(toAddress), toScValI128(amount)],
+    caller,
+    true
   );
 }
 

@@ -89,20 +89,16 @@ export default function Navbar({
       }`}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-        {/* Logo */}
+          {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c6cf0] to-[#4fc3f7] shadow-[0_0_20px_rgba(124,108,240,0.3)]">
+          <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#f472b6] to-[#7c6cf0] shadow-[0_0_20px_rgba(244,114,182,0.3)]">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
-              <path d="M15 18H9" />
-              <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
-              <circle cx="17" cy="18" r="2" />
-              <circle cx="7" cy="18" r="2" />
+              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
             </svg>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-base font-semibold tracking-tight text-white">
-              SupplyTrack
+              CreatorVault
             </span>
             <span className="hidden sm:inline-block text-[10px] font-mono text-white/20 border border-white/[0.06] rounded px-1.5 py-0.5">
               v1.0

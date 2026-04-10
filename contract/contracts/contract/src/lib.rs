@@ -1,64 +1,47 @@
 #![no_std]
-use soroban_sdk::{contract, contractimpl, Env, Symbol, Address, Map};
+use soroban_sdk::{contract, contractimpl, symbol_short, Env, Symbol, Map, Address};
 
 #[contract]
 pub struct CreatorEconomy;
 
 #[contractimpl]
 impl CreatorEconomy {
-
     // Register a creator
     pub fn register_creator(env: Env, creator: Address) {
         creator.require_auth();
 
-        let key = Symbol::new(&env, "CREATOR");
-        let mut creators: Map<Address, i128> = env
-            .storage()
-            .instance()
-            .get(&key)
-            .unwrap_or(Map::new(&env));
+        let key = symbol_short!("CREATORS");
+        let mut creators: Map<Address, bool> =
+            env.storage().instance().get(&key).unwrap_or(Map::new(&env));
 
-        if creators.contains_key(creator.clone()) {
-            panic!("Already registered");
-        }
-
-        creators.set(creator.clone(), 0);
+        creators.set(creator.clone(), true);
         env.storage().instance().set(&key, &creators);
+    }
+
+    // Check if address is a creator
+    pub fn is_creator(env: Env, creator: Address) -> bool {
+        let key = symbol_short!("CREATORS");
+        let creators: Map<Address, bool> =
+            env.storage().instance().get(&key).unwrap_or(Map::new(&env));
+
+        creators.get(creator).unwrap_or(false)
     }
 
     // Tip a creator
     pub fn tip_creator(env: Env, from: Address, to: Address, amount: i128) {
         from.require_auth();
 
-        let key = Symbol::new(&env, "CREATOR");
-        let mut creators: Map<Address, i128> = env
-            .storage()
-            .instance()
-            .get(&key)
-            .unwrap_or(Map::new(&env));
-
-        if !creators.contains_key(to.clone()) {
-            panic!("Creator not found");
+        // Verify creator exists
+        if !Self::is_creator(env.clone(), to.clone()) {
+            panic!("Not a registered creator");
         }
 
-        // Increase creator balance
-        let current = creators.get(to.clone()).unwrap_or(0);
-        creators.set(to.clone(), current + amount);
+        // Transfer native XLM (simplified logic)
+        let token_client = soroban_sdk::token::Client::new(
+            &env,
+            &env.current_contract_address()
+        );
 
-        env.storage().instance().set(&key, &creators);
-
-        // NOTE: This example does NOT transfer tokens (simplified)
-    }
-
-    // Get creator earnings
-    pub fn get_earnings(env: Env, creator: Address) -> i128 {
-        let key = Symbol::new(&env, "CREATOR");
-        let creators: Map<Address, i128> = env
-            .storage()
-            .instance()
-            .get(&key)
-            .unwrap_or(Map::new(&env));
-
-        creators.get(creator).unwrap_or(0)
+        token_client.transfer(&from, &to, &amount);
     }
 }
